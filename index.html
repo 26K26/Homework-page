@@ -7,6 +7,11 @@
   <style>
     body { font-family: sans-serif; text-align: center; padding: 2em; }
     #content { display: none; }
+    form { margin-top: 2em; }
+    textarea { width: 80%; max-width: 500px; }
+    input[type="text"], input[type="file"] { width: 80%; max-width: 500px; }
+    button { margin-top: 1em; padding: 0.5em 1em; }
+    #status { color: green; margin-top: 1em; }
   </style>
 </head>
 <body>
@@ -21,9 +26,17 @@
 <div id="content">
   <h1>R7新中３数HP</h1>
   <p>以下のPDFを確認してください。</p>
-
-  <!-- PDFリンクのみ -->
   <p><a href="kimatsu-toi-kaitou.pdf" target="_blank">▶ 教P43~90問解答を開く</a></p>
+
+  <h2>質問箱</h2>
+  <p style="color: red;">※画像には氏名・顔・学校名などの個人情報が写らないようご注意ください。</p>
+  <form id="questionForm">
+    <input type="text" name="name" placeholder="名前（匿名OK）"><br>
+    <textarea name="question" placeholder="質問内容（任意）" rows="4"></textarea><br>
+    <input type="file" name="image" accept="image/*"><br>
+    <button type="submit">送信</button>
+    <p id="status"></p>
+  </form>
 </div>
 
 <script>
@@ -38,6 +51,27 @@
       document.getElementById("error").textContent = "パスワードが違います。";
     }
   }
+
+  document.getElementById("questionForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    document.getElementById("status").textContent = "送信中...";
+
+    try {
+      const response = await fetch("YOUR_GAS_WEB_APP_URL", {
+        method: "POST",
+        body: formData
+      });
+      const result = await response.text();
+      form.reset();
+      document.getElementById("status").textContent = "送信が完了しました。";
+    } catch (error) {
+      document.getElementById("status").textContent = "送信に失敗しました。";
+    }
+  });
 </script>
 
 </body>
